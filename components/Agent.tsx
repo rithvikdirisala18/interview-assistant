@@ -95,8 +95,8 @@ const Agent = ({userName, userId, type}: AgentProps) => {
             <div className='card-border '>
                 <div className='card-content'>
                     <Image src="/user-avatar.png" alt='user avatar' width={540} height={540} className='rounded-full object-cover size-[120px]'/>
-                </div>
                 <h3>{userName}</h3>
+                </div>
             </div>
         </div>
         {messages.length>0 && (
@@ -110,14 +110,14 @@ const Agent = ({userName, userId, type}: AgentProps) => {
 
         <div className='w-full flex justify-center'>
             {callStatus !== 'ACTIVE' ? (
-                <button className='relative btn-call' onClick={handleCall}>
+                <button className='relative btn-call' onClick={()=>handleCall()}>
                     <span className={cn("absolute animate-ping rounded-full opacity-75", callStatus!=="CONNECTING" && "hidden")}/>
                     <span>
                     {isCallActiveOrFinished ? 'Call' : '...'}
                     </span>
                 </button>
             ) : (
-                <button className='btn-disconnect' onClick={handleDisconnect}>
+                <button className='btn-disconnect' onClick={()=>handleDisconnect()}>
                     End
                 </button>
             )}
