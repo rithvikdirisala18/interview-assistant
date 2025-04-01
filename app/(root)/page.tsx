@@ -1,11 +1,22 @@
 import { Button } from '@/components/ui/button'
-import React from 'react'
+import React, { use } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { dummyInterviews } from '@/constants'
 import InterviewCard from '@/components/InterviewCard'
+import { getCurrentUser, getInterviewsByUserId, getLatestInterviews } from '@/lib/actions/auth.action'
 
-const page = () => {
+const page = async () => {
+  const user = await getCurrentUser();
+
+  const [userInterviews, latestInterview] = await Promise.all([
+    await getInterviewsByUserId(user?.id!),
+    await getLatestInterviews({userId: user?.id!})
+  ]);
+
+  const hasPastInterview = userInterviews?.length!>0;
+  const hasUpcomingInterview = latestInterview?.length!>0;
+
   return (
     <>
     <section className='card-cta'>
@@ -24,21 +35,29 @@ const page = () => {
     <section className='flex flex-col gap-6 mt-8'>
       <h2> Your interviews </h2>
       <div className='interviews-section'>
-        {dummyInterviews.map((interview) =>(
-          <InterviewCard {...interview} key={interview.id}/> 
-        ))}
+        {
+          hasPastInterview? (
+            userInterviews?.map((interview)=>(
+              <InterviewCard {...interview} key={interview.id}/> 
+            ))): (
+              <p>You haven&apos;t taken any interview yet</p>
+            )
+        }
 
-        {/* <p>You haven&apos;t taken any interview yet</p> */}
       </div>
     </section>
 
     <section className='flex flex-col gap-6 mt-8'>
       <h2>Take an interview</h2>
       <div className='interviews-section'>
-        {dummyInterviews.map((interview) =>(
-          <InterviewCard {...interview} key={interview.id }/> 
-        ))}
-        {/* <p>There are no interviews available</p> */}
+        {
+          hasUpcomingInterview? (
+            latestInterview?.map((interview)=>(
+              <InterviewCard {...interview} key={interview.id}/> 
+            ))): (
+              <p>You don&apos;t have any new interviews to take  yet</p>
+            )
+        }
       </div>
     </section>
     </>
